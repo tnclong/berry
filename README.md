@@ -40,3 +40,9 @@ func main() {
 	fmt.Println(berry.Dye("FgYellow(false)", berry.FgYellow))
 }
 ```
+
+## Test
+
+```
+CLICOLOR_FORCE=1 go test -v -p=1 -count=1 .
+```
