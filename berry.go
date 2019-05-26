@@ -12,7 +12,7 @@ func Effect(str string, e E) string {
 
 // Dye wraps background color or foreground color arround the str.
 //
-// foreground color is a type D and start with Bg,
+// foreground color is a type D and start with Fg,
 // background color is a type D and start with Bg.
 //
 // When d is FgRGB or BgRGB, a legal c is required.
