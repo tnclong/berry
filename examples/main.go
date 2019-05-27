@@ -2,26 +2,35 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tnclong/berry"
 )
 
 func main() {
-	fmt.Println(berry.Dye("FgYellow", berry.FgYellow))
-	fmt.Println(berry.Dye("BgYellow", berry.BgYellow))
+	colors := map[string][2]berry.D{
+		"Red":     {berry.FgRed, berry.BgRed},
+		"Green":   {berry.FgGreen, berry.BgGreen},
+		"Yellow":  {berry.FgYellow, berry.BgYellow},
+		"Blue":    {berry.FgBlue, berry.BgBlue},
+		"Magenta": {berry.FgMagenta, berry.BgMagenta},
+		"Cyan":    {berry.FgCyan, berry.BgCyan},
+		"White":   {berry.FgWhite, berry.BgWhite},
+	}
 
-	fmt.Println(berry.Dye("FgRed", berry.FgRed))
-	fmt.Println(berry.Dye("BgRed", berry.BgRed))
-
-	fmt.Println(berry.Effect("Italic", berry.Italic))
-	fmt.Println(berry.Effect("Underline", berry.Underline))
-
-	fmt.Println(berry.Dye("FgRGB 8-bit 88", berry.FgRGB, 88))
-	fmt.Println(berry.Dye("BgRGB 8-bit 88", berry.BgRGB, 88))
-
-	fmt.Println(berry.Dye("FgRGB 24-bit 1,1,1", berry.FgRGB, 1, 1, 1))
-	fmt.Println(berry.Dye("BgRGB 24-bit 1,1,1", berry.BgRGB, 1, 1, 1))
-
-	berry.Enable(false)
-	fmt.Println(berry.Dye("FgYellow(false)", berry.FgYellow))
+	for n, c := range colors {
+		fmt.Println(
+			berry.Dye(n, c[0]),
+			strings.Repeat(" ", 10-len(n)),
+			berry.Dye(strings.Repeat(" ", 20), c[1]),
+			strings.Repeat(" ", 3),
+			berry.Effect(
+				berry.Effect(
+					berry.Effect(berry.Dye(n, c[0]), berry.Italic),
+					berry.Underline,
+				),
+				berry.Bright,
+			),
+		)
+	}
 }
