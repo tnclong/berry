@@ -17,6 +17,11 @@ func Enable(e bool) {
 var enabled = true
 
 func init() {
+	ini()
+}
+
+func ini() {
+	// https://github.com/golang/go/issues/18153
 	if !isTerminal(os.Stdout) || !isTerminal(os.Stderr) {
 		enabled = false
 	}

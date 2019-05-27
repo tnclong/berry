@@ -60,11 +60,20 @@ func TestEffect(t *testing.T) {
 		},
 	}
 
+	Enable(true)
 	for _, tc := range cases {
 		actual := Effect(tc.str, tc.e)
 		t.Log(tc.want, actual)
 		if actual != tc.want {
 			t.Errorf("Effect(%q) want %q but get %q", tc.str, tc.want, actual)
+		}
+	}
+
+	Enable(false)
+	for _, tc := range cases {
+		actual := Effect(tc.str, tc.e)
+		if actual != tc.str {
+			t.Errorf("when Enable(false), Effect(%q) want %q but get %q", tc.str, tc.str, actual)
 		}
 	}
 }
@@ -110,7 +119,27 @@ func TestDye(t *testing.T) {
 			c:    []uint8{255, 255, 255},
 			want: "\x1b[48;2;255;255;255mBgRGB 255,255,255\x1b[0m",
 		},
+		{
+			str:  "number of c is 0",
+			d:    BgRGB,
+			c:    []uint8{},
+			want: "number of c is 0",
+		},
+		{
+			str:  "number of c is 2",
+			d:    BgRGB,
+			c:    []uint8{2, 2},
+			want: "number of c is 2",
+		},
+		{
+			str:  "number of c is 4",
+			d:    BgRGB,
+			c:    []uint8{4, 4, 4, 4},
+			want: "number of c is 4",
+		},
 	}
+
+	Enable(true)
 	for _, tc := range cases {
 		actual := Dye(tc.str, tc.d, tc.c...)
 		t.Log(tc.want, actual)
@@ -118,9 +147,19 @@ func TestDye(t *testing.T) {
 			t.Errorf("Dye(%q) want %q but get %q", tc.str, tc.want, actual)
 		}
 	}
+
+	Enable(false)
+	for _, tc := range cases {
+		actual := Dye(tc.str, tc.d, tc.c...)
+		if actual != tc.str {
+			t.Errorf("When Enable(false), Dye(%q) want %q but get %q", tc.str, tc.str, actual)
+		}
+	}
 }
 
 func TestDyeDisplay(t *testing.T) {
+	Enable(true)
+
 	var dyes = map[string]D{
 		"FgBlack":   FgBlack,
 		"FgRed":     FgRed,
