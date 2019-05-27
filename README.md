@@ -3,6 +3,8 @@
 Berry colorizing printed string on ANSI terminals.
 [ANSI escape codes](http://en.wikipedia.org/wiki/ANSI_escape_code)
 
+![Examples](https://github.com/tnclong/berry/blob/master/examples.png)
+
 ## Doc
 
 https://godoc.org/github.com/tnclong/berry
