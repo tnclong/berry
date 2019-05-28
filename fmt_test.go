@@ -25,8 +25,8 @@ func TestAround(t *testing.T) {
 	if len(actual) != len(arr)+2 {
 		t.Errorf("want size increase 2")
 	}
-	if actual[0] != join(yellow) {
-		t.Errorf("want first is %q but get %q", join(yellow), actual[0])
+	if actual[0] != string(join(yellow)) {
+		t.Errorf("want first is %q but get %q", string(join(yellow)), actual[0])
 	}
 	if !reflect.DeepEqual(actual[1:len(actual)-1], arr) {
 		t.Errorf("want same")

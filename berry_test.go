@@ -212,3 +212,28 @@ func TestSDisplay(t *testing.T) {
 	t.Log(R{FgSet, Bit8, 201, BgSet, Bit8, 46}.S("multi2"))
 	t.Log(R{Italic, Underline, FgSet, Bit8, 201, BgSet, Bit8, 46}.S("multi3"))
 }
+
+func TestPrepare(t *testing.T) {
+	r := R{FgSet, Bit8, 1}
+	pr := Prepare(r)
+
+	want := "\x1b[38;5;1m"
+	t.Logf("%q %q", want, string(pr))
+	if want != string(pr) {
+		t.Logf("want %q but get %q", want, string(pr))
+	}
+
+	for i := 0; i < 10; i++ {
+		want := "\x1b[38;5;1ma\x1b[0m"
+		actual := pr.S("a")
+		t.Log(want, actual)
+		if want != actual {
+			t.Errorf("want %q but get %q", want, actual)
+		}
+	}
+
+	ppr := Prepare(pr)
+	if want != string(ppr) {
+		t.Errorf("want %q but get %q", want, string(ppr))
+	}
+}

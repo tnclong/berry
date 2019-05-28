@@ -2,7 +2,13 @@ package berry
 
 var sseq = []uint8{'\x1b', '['}
 
-func join(codes []uint8) string {
+func join(codes []uint8) []uint8 {
+	if len(codes) > 3 &&
+		codes[0] == '\x1b' && codes[1] == '[' &&
+		codes[len(codes)-1] == 'm' {
+		return codes
+	}
+
 	buf := make([]byte, len(codes)*4+1)
 	n := 0
 
@@ -30,7 +36,7 @@ func join(codes []uint8) string {
 
 	buf[n-1] = 'm'
 
-	return string(buf[:n])
+	return buf[:n]
 }
 
 var (

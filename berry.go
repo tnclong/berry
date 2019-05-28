@@ -20,6 +20,14 @@ import (
 //
 type R []uint8
 
+// Prepare create a new R has better performace
+// If r already prepared, r will be returned.
+// examples:
+//   string(Prepare(berry.R{berry.FgSet, berry.Bit8, 1})) => "\x1b[38;5;1m"
+func Prepare(r R) R {
+	return join(r)
+}
+
 // S wraps str around a sequence of SGR parameters that store in r.
 //
 // When the length of R is 0, the S will clear all surrounding in str.
@@ -32,7 +40,7 @@ func (r R) S(str string) string {
 		return seqReg.ReplaceAllString(str, "")
 	}
 
-	hseq := join(r)
+	hseq := string(join(r))
 	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
 		return m + hseq
 	})
