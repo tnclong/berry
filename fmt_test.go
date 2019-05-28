@@ -13,7 +13,7 @@ func TestAround(t *testing.T) {
 	Enable(false)
 
 	arr := []interface{}{1, "1", true}
-	yellow := R{FgYellow}
+	yellow := Yellow
 
 	actual := yellow.around(arr)
 	if !reflect.DeepEqual(actual, arr) {
@@ -39,7 +39,7 @@ func TestAround(t *testing.T) {
 func TestFprintf(t *testing.T) {
 	Enable(true)
 
-	green := R{FgGreen}
+	green := Green
 	var buf bytes.Buffer
 	_, err := green.Fprintf(&buf, "g%vg", 1)
 	if err != nil {
@@ -59,7 +59,7 @@ func TestPrintf(t *testing.T) {
 	stdout(
 		t,
 		func() {
-			green := R{FgGreen}
+			green := Green
 			_, err := green.Printf("g%vg", 2)
 			if err != nil {
 				t.Fatal(err)
@@ -78,7 +78,7 @@ func TestPrintf(t *testing.T) {
 func TestSprintf(t *testing.T) {
 	Enable(true)
 
-	green := R{FgGreen}
+	green := Green
 	actual := green.Sprintf("g%vg", 3)
 	want := "\x1b[32mg3g\x1b[0m"
 	t.Log(actual, want)
@@ -90,7 +90,7 @@ func TestSprintf(t *testing.T) {
 func TestFprint(t *testing.T) {
 	Enable(true)
 
-	green := R{FgGreen}
+	green := Green
 	var buf bytes.Buffer
 	_, err := green.Fprint(&buf, "g", 4, "g")
 	if err != nil {
@@ -110,7 +110,7 @@ func TestPrint(t *testing.T) {
 	stdout(
 		t,
 		func() {
-			green := R{FgGreen}
+			green := Green
 			_, err := green.Print("g", 5, "g")
 			if err != nil {
 				t.Fatal(err)
@@ -129,7 +129,7 @@ func TestPrint(t *testing.T) {
 func TestSprint(t *testing.T) {
 	Enable(true)
 
-	green := R{FgGreen}
+	green := Green
 	actual := green.Sprint("g", 6, "g")
 	want := "\x1b[32mg6g\x1b[0m"
 	t.Log(actual, want)
@@ -157,7 +157,7 @@ func TestPrintln(t *testing.T) {
 	stdout(
 		t,
 		func() {
-			green := R{FgGreen}
+			green := Green
 			_, err := green.Println("g", 8, "g")
 			if err != nil {
 				t.Fatal(err)
@@ -176,7 +176,7 @@ func TestPrintln(t *testing.T) {
 func TestSprintln(t *testing.T) {
 	Enable(true)
 
-	green := R{FgGreen}
+	green := Green
 	actual := green.Sprintln("g", 9, "g")
 	want := "\x1b[32m g 9 g \x1b[0m\n"
 	t.Log(actual, want)
