@@ -30,8 +30,8 @@ func main() {
 	fmt.Println(berry.R{berry.FgYellow}.S("FgYellow"))
 	fmt.Println(berry.R{berry.BgYellow}.S("BgYellow"))
 
-	fmt.Println(berry.R{berry.FgRed}.S("FgRed"))
-	fmt.Println(berry.R{berry.BgRed}.S("BgRed"))
+	berry.R{berry.FgRed}.Println("FgRed")
+	berry.R{berry.BgRed}.Println("BgRed")
 
 	fmt.Println(berry.R{berry.Italic}.S("Italic"))
 	fmt.Println(berry.R{berry.Underline}.S("Underline"))
@@ -39,8 +39,10 @@ func main() {
 	fmt.Println(berry.R{berry.FgSet, berry.Bit8, 88}.S("Fg Bit8"))
 	fmt.Println(berry.R{berry.BgSet, berry.Bit8, 88}.S("Bg Bit8"))
 
-	fmt.Println(berry.R{berry.FgSet, berry.Bit24, 100, 100, 1}.S("Fg Bit24"))
-	fmt.Println(berry.R{berry.BgSet, berry.Bit24, 100, 100, 1}.S("Bg Bit24"))
+	pFg := berry.Prepare(berry.R{berry.FgSet, berry.Bit24, 100, 100, 1})
+	pFg.Println("Fg Bit24")
+	pBg := berry.Prepare(berry.R{berry.BgSet, berry.Bit24, 100, 100, 1})
+	pBg.Println("Bg Bit24")
 
 	berry.Enable(false)
 	fmt.Println(berry.R{berry.FgYellow}.S("FgYellow(enabled=false)"))
