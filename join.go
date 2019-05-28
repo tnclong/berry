@@ -1,36 +1,6 @@
 package berry
 
-import (
-	"regexp"
-	"strings"
-)
-
-// SGR wraps codes arround the string
-// if length of codes is 0, this function will clear all wrapped.
-func SGR(str string, codes ...uint8) string {
-	if len(codes) == 0 {
-		return seqReg.ReplaceAllString(str, "")
-	}
-
-	hseq := "\x1b[" + joinSemicolon(codes) + "m"
-	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
-		return m + hseq
-	})
-
-	if strings.HasSuffix(str, tseq) {
-		return str
-	}
-
-	return str + tseq
-}
-
-var (
-	seqReg  = regexp.MustCompile(`\x1b\[[0-9;]*m`)
-	hseqReg = regexp.MustCompile(`^(\x1b\[([\d;]+)m)*`)
-	tseq    = "\x1b[0m"
-)
-
-func joinSemicolon(codes []uint8) string {
+func join(codes []uint8) string {
 	buf := make([]byte, len(codes)*4)
 	n := 0
 	for _, c := range codes {

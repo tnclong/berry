@@ -7,160 +7,137 @@ import (
 	"time"
 )
 
-func TestEffect(t *testing.T) {
+func TestS(t *testing.T) {
 	var cases = []struct {
 		str  string
-		e    E
+		r    R
+		r2   R
 		want string
 	}{
 		{
+			// when no codes(nil) given
+			str:  "\x1b[1mhello\x1b[0m",
+			r:    nil,
+			want: "hello",
+		},
+		{
+			// when no codes([]) given
+			str:  "\x1b[1mhello\x1b[0mm",
+			r:    R{},
+			want: "hellom",
+		},
+		{
 			str:  "Reset",
-			e:    Reset,
+			r:    R{Reset},
 			want: "\x1b[0mReset\x1b[0m",
 		},
 		{
 			str:  "Bright",
-			e:    Reset,
-			want: "\x1b[0mBright\x1b[0m",
+			r:    R{Bright},
+			want: "\x1b[1mBright\x1b[0m",
 		},
 		{
 			str:  "Faint",
-			e:    Faint,
+			r:    R{Faint},
 			want: "\x1b[2mFaint\x1b[0m",
 		},
 		{
 			str:  "Italic",
-			e:    Italic,
+			r:    R{Italic},
 			want: "\x1b[3mItalic\x1b[0m",
 		},
 		{
 			str:  "Underline",
-			e:    Underline,
+			r:    R{Underline},
 			want: "\x1b[4mUnderline\x1b[0m",
 		},
 		{
 			str:  "Blink",
-			e:    Blink,
+			r:    R{Blink},
 			want: "\x1b[5mBlink\x1b[0m",
 		},
 		{
 			str:  "Inverse",
-			e:    Inverse,
+			r:    R{Inverse},
 			want: "\x1b[7mInverse\x1b[0m",
 		},
 		{
 			str:  "Hide",
-			e:    Hide,
+			r:    R{Hide},
 			want: "\x1b[8mHide\x1b[0m",
 		},
 		{
 			str:  "CrossOut",
-			e:    CrossOut,
+			r:    R{CrossOut},
 			want: "\x1b[9mCrossOut\x1b[0m",
+		},
+		{
+			str:  "FgBlack",
+			r:    R{FgBlack},
+			want: "\x1b[30mFgBlack\x1b[0m",
+		},
+		{
+			str:  "BgRed",
+			r:    R{BgRed},
+			want: "\x1b[41mBgRed\x1b[0m",
+		},
+		{
+			str:  "FgSet, Bit8, 51",
+			r:    R{FgSet, Bit8, 51},
+			want: "\x1b[38;5;51mFgSet, Bit8, 51\x1b[0m",
+		},
+		{
+			str:  "BgSet, Bit8, 160",
+			r:    R{BgSet, Bit8, 160},
+			want: "\x1b[48;5;160mBgSet, Bit8, 160\x1b[0m",
+		},
+		{
+			str:  "FgSet, Bit24, 0, 0, 0",
+			r:    R{FgSet, Bit24, 0, 0, 0},
+			want: "\x1b[38;2;0;0;0mFgSet, Bit24, 0, 0, 0\x1b[0m",
+		},
+		{
+			str:  "BgSet, Bit24, 255, 255, 255",
+			r:    R{BgSet, Bit24, 255, 255, 255},
+			want: "\x1b[48;2;255;255;255mBgSet, Bit24, 255, 255, 255\x1b[0m",
+		},
+
+		{
+			str:  "Italic then BgRed",
+			r:    R{Italic},
+			r2:   R{BgRed},
+			want: "\x1b[3m\x1b[41mItalic then BgRed\x1b[0m",
 		},
 	}
 
 	Enable(true)
 	for _, tc := range cases {
-		actual := Effect(tc.str, tc.e)
+		actual := tc.r.S(tc.str)
+		if len(tc.r2) != 0 {
+			actual = tc.r2.S(actual)
+		}
 		t.Log(tc.want, actual)
 		if actual != tc.want {
-			t.Errorf("Effect(%q) want %q but get %q", tc.str, tc.want, actual)
+			t.Errorf("S(%q) want %q but get %q", tc.str, tc.want, actual)
 		}
 	}
 
 	Enable(false)
 	for _, tc := range cases {
-		actual := Effect(tc.str, tc.e)
+		actual := tc.r.S(tc.str)
+		if len(tc.r2) != 0 {
+			actual = tc.r2.S(actual)
+		}
 		if actual != tc.str {
 			t.Errorf("when Enable(false), Effect(%q) want %q but get %q", tc.str, tc.str, actual)
 		}
 	}
 }
 
-func TestDye(t *testing.T) {
-	var cases = []struct {
-		str  string
-		d    D
-		c    []uint8
-		want string
-	}{
-		{
-			str:  "FgBlack",
-			d:    FgBlack,
-			want: "\x1b[30mFgBlack\x1b[0m",
-		},
-		{
-			str:  "BgRed",
-			d:    BgRed,
-			want: "\x1b[41mBgRed\x1b[0m",
-		},
-		{
-			str:  "FgRGB 51",
-			d:    FgRGB,
-			c:    []uint8{51},
-			want: "\x1b[38;5;51mFgRGB 51\x1b[0m",
-		},
-		{
-			str:  "BgRGB 160",
-			d:    BgRGB,
-			c:    []uint8{160},
-			want: "\x1b[48;5;160mBgRGB 160\x1b[0m",
-		},
-		{
-			str:  "FgRGB 0,0,0",
-			d:    FgRGB,
-			c:    []uint8{0, 0, 0},
-			want: "\x1b[38;2;0;0;0mFgRGB 0,0,0\x1b[0m",
-		},
-		{
-			str:  "BgRGB 255,255,255",
-			d:    BgRGB,
-			c:    []uint8{255, 255, 255},
-			want: "\x1b[48;2;255;255;255mBgRGB 255,255,255\x1b[0m",
-		},
-		{
-			str:  "number of c is 0",
-			d:    BgRGB,
-			c:    []uint8{},
-			want: "number of c is 0",
-		},
-		{
-			str:  "number of c is 2",
-			d:    BgRGB,
-			c:    []uint8{2, 2},
-			want: "number of c is 2",
-		},
-		{
-			str:  "number of c is 4",
-			d:    BgRGB,
-			c:    []uint8{4, 4, 4, 4},
-			want: "number of c is 4",
-		},
-	}
-
-	Enable(true)
-	for _, tc := range cases {
-		actual := Dye(tc.str, tc.d, tc.c...)
-		t.Log(tc.want, actual)
-		if actual != tc.want {
-			t.Errorf("Dye(%q) want %q but get %q", tc.str, tc.want, actual)
-		}
-	}
-
-	Enable(false)
-	for _, tc := range cases {
-		actual := Dye(tc.str, tc.d, tc.c...)
-		if actual != tc.str {
-			t.Errorf("When Enable(false), Dye(%q) want %q but get %q", tc.str, tc.str, actual)
-		}
-	}
-}
-
-func TestDyeDisplay(t *testing.T) {
+func TestSDisplay(t *testing.T) {
 	Enable(true)
 
-	var dyes = map[string]D{
+	var dyes = map[string]uint8{
 		"FgBlack":   FgBlack,
 		"FgRed":     FgRed,
 		"FgGreen":   FgGreen,
@@ -180,14 +157,14 @@ func TestDyeDisplay(t *testing.T) {
 		"BgWhite":   BgWhite,
 	}
 	for str, d := range dyes {
-		t.Log(Dye(str, d), d)
+		t.Log(R{d}.S(str))
 	}
 
 	var bit8Fg, bit8Bg [32][8]string
 	var c uint8
 	for {
-		bit8Fg[c/8][c%8] = Dye(fmt.Sprintf("FgRGB: %v", c), FgRGB, c)
-		bit8Bg[c/8][c%8] = Dye(fmt.Sprintf("BgRGB: %v", c), BgRGB, c)
+		bit8Fg[c/8][c%8] = R{FgSet, Bit8, c}.S(fmt.Sprintf("FgSet: %v", c))
+		bit8Bg[c/8][c%8] = R{BgSet, Bit8, c}.S(fmt.Sprintf("BgSet: %v", c))
 
 		if c^0xFF == 0 {
 			break
@@ -208,8 +185,8 @@ func TestDyeDisplay(t *testing.T) {
 		for {
 			bb := uint32(b)
 
-			bit24Fg[gg*32+bb/8][bb%8] = Dye(fmt.Sprintf("%v,%v,%v", r, g, b), FgRGB, r, g, b)
-			bit24Bg[gg*32+bb/8][bb%8] = Dye(fmt.Sprintf("%v,%v,%v", r, g, b), BgRGB, r, g, b)
+			bit24Fg[gg*32+bb/8][bb%8] = R{FgSet, Bit24, r, g, b}.S(fmt.Sprintf("%v,%v,%v", r, g, b))
+			bit24Bg[gg*32+bb/8][bb%8] = R{BgSet, Bit24, r, g, b}.S(fmt.Sprintf("%v,%v,%v", r, g, b))
 
 			if b^0xFF == 0 {
 				b = 0
@@ -226,6 +203,12 @@ func TestDyeDisplay(t *testing.T) {
 	}
 	for i := 0; i < 8192; i++ {
 		t.Log(bit24Fg[i])
+		t.Log(fmt.Sprintf("%q", bit24Fg[i]))
 		t.Log(bit24Bg[i])
+		t.Log(fmt.Sprintf("%q", bit24Bg[i]))
 	}
+
+	t.Log(R{Italic, Underline, FgRed}.S("multi1"))
+	t.Log(R{FgSet, Bit8, 201, BgSet, Bit8, 46}.S("multi2"))
+	t.Log(R{Italic, Underline, FgSet, Bit8, 201, BgSet, Bit8, 46}.S("multi3"))
 }

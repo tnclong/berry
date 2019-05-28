@@ -27,23 +27,23 @@ import (
 )
 
 func main() {
-	fmt.Println(berry.Dye("FgYellow", berry.FgYellow))
-	fmt.Println(berry.Dye("BgYellow", berry.BgYellow))
+	fmt.Println(berry.R{berry.FgYellow}.S("FgYellow"))
+	fmt.Println(berry.R{berry.BgYellow}.S("BgYellow"))
 
-	fmt.Println(berry.Dye("FgRed", berry.FgRed))
-	fmt.Println(berry.Dye("BgRed", berry.BgRed))
+	fmt.Println(berry.R{berry.FgRed}.S("FgRed"))
+	fmt.Println(berry.R{berry.BgRed}.S("BgRed"))
 
-	fmt.Println(berry.Effect("Italic", berry.Italic))
-	fmt.Println(berry.Effect("Underline", berry.Underline))
+	fmt.Println(berry.R{berry.Italic}.S("Italic"))
+	fmt.Println(berry.R{berry.Underline}.S("Underline"))
 
-	fmt.Println(berry.Dye("FgRGB 8-bit 88", berry.FgRGB, 88))
-	fmt.Println(berry.Dye("BgRGB 8-bit 88", berry.BgRGB, 88))
+	fmt.Println(berry.R{berry.FgSet, berry.Bit8, 88}.S("Fg Bit8"))
+	fmt.Println(berry.R{berry.BgSet, berry.Bit8, 88}.S("Bg Bit8"))
 
-	fmt.Println(berry.Dye("FgRGB 24-bit 1,1,1", berry.FgRGB, 1, 1, 1))
-	fmt.Println(berry.Dye("BgRGB 24-bit 1,1,1", berry.BgRGB, 1, 1, 1))
+	fmt.Println(berry.R{berry.FgSet, berry.Bit24, 100, 100, 1}.S("Fg Bit24"))
+	fmt.Println(berry.R{berry.BgSet, berry.Bit24, 100, 100, 1}.S("Bg Bit24"))
 
 	berry.Enable(false)
-	fmt.Println(berry.Dye("FgYellow(false)", berry.FgYellow))
+	fmt.Println(berry.R{berry.FgYellow}.S("FgYellow(enabled=false)"))
 }
 ```
 
