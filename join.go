@@ -1,28 +1,36 @@
 package berry
 
+var sseq = []uint8{'\x1b', '['}
+
 func join(codes []uint8) string {
-	buf := make([]byte, len(codes)*4)
+	buf := make([]byte, len(codes)*4+1)
 	n := 0
+
+	copy(buf[n:], sseq)
+	n += 2
+
 	for _, c := range codes {
 		if c < 10 {
 			buf[n] = one[c]
 			n++
 		} else if c < 100 {
-			copy(buf[n:], two[(c-10)*2:(c-10)*2+2])
+			copy(buf[n:], two[(c-10)*2:(c-9)*2])
 			n += 2
 		} else {
 			cc := uint16(c)
 			copy(
 				buf[n:],
-				three[(cc-100)*3:(cc-100)*3+3],
+				three[(cc-100)*3:(cc-99)*3],
 			)
 			n += 3
 		}
-		buf[n] = 59
+		buf[n] = ';'
 		n++
 	}
 
-	return string(buf[:n-1])
+	buf[n-1] = 'm'
+
+	return string(buf[:n])
 }
 
 var (

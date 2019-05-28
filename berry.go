@@ -32,7 +32,7 @@ func (r R) S(str string) string {
 		return seqReg.ReplaceAllString(str, "")
 	}
 
-	hseq := "\x1b[" + join(r) + "m"
+	hseq := join(r)
 	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
 		return m + hseq
 	})
