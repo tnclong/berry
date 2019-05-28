@@ -27,10 +27,10 @@ import (
 )
 
 func main() {
-	fmt.Println(berry.R{berry.FgYellow}.S("FgYellow"))
+	fmt.Println(berry.Yellow.S("FgYellow"))
 	fmt.Println(berry.R{berry.BgYellow}.S("BgYellow"))
 
-	berry.R{berry.FgRed}.Println("FgRed")
+	berry.Red.Println("FgRed")
 	berry.R{berry.BgRed}.Println("BgRed")
 
 	fmt.Println(berry.R{berry.Italic}.S("Italic"))
@@ -45,7 +45,7 @@ func main() {
 	pBg.Println("Bg Bit24")
 
 	berry.Enable(false)
-	fmt.Println(berry.R{berry.FgYellow}.S("FgYellow(enabled=false)"))
+	fmt.Println(berry.Yellow.S("FgYellow(enabled=false)"))
 }
 ```
 
