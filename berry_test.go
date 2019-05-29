@@ -284,6 +284,10 @@ func BenchmarkS50(b *testing.B) {
 func BenchmarkS100(b *testing.B) {
 	benchmarkS(b, Green, 100)
 }
+
+func BenchmarkSS100(b *testing.B) {
+	benchmarkSS(b, Green, 100)
+}
 func BenchmarkS100WithoutP(b *testing.B) {
 	benchmarkS(b, R{FgGreen}, 100)
 }
@@ -314,6 +318,10 @@ func BenchmarkS500(b *testing.B) {
 
 func BenchmarkS1000(b *testing.B) {
 	benchmarkS(b, Green, 1000)
+}
+
+func BenchmarkSS1000(b *testing.B) {
+	benchmarkSS(b, Green, 1000)
 }
 
 func BenchmarkS1000WithoutP(b *testing.B) {
@@ -351,6 +359,16 @@ func benchmarkS(b *testing.B, r R, count int) {
 
 	for n := 0; n < b.N; n++ {
 		r.S(str)
+	}
+}
+
+func benchmarkSS(b *testing.B, r R, count int) {
+	Enable(true)
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		r.SS(str)
 	}
 }
 

@@ -37,7 +37,7 @@ func (r R) S(str string) string {
 
 // SS is strict S method.
 //
-// This method is about 7x slower than S in benchmark result.
+// This method is about 4~6x slower than S in benchmark result.
 //
 // If you have a str already arrounded with SGR:
 //     Red.S("\x1b[3mItalic then BgRed\x1b[0m")
