@@ -3,6 +3,7 @@ package berry
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"testing"
 	"time"
 )
@@ -235,5 +236,164 @@ func TestPrepare(t *testing.T) {
 	ppr := Prepare(pr)
 	if want != string(ppr) {
 		t.Errorf("want %q but get %q", want, string(ppr))
+	}
+}
+
+func BenchmarkS1(b *testing.B) {
+	benchmarkS(b, Green, 1)
+}
+
+func BenchmarkS10(b *testing.B) {
+	benchmarkS(b, Green, 10)
+}
+
+func BenchmarkS50(b *testing.B) {
+	benchmarkS(b, Green, 50)
+}
+
+func BenchmarkS100(b *testing.B) {
+	benchmarkS(b, Green, 100)
+}
+func BenchmarkS100WithoutP(b *testing.B) {
+	benchmarkS(b, R{FgGreen}, 100)
+}
+
+func BenchmarkBestS100(b *testing.B) {
+	benchmarkBS(b, 100)
+}
+
+func BenchmarkSprint100(b *testing.B) {
+	benchmarkSprint(b, Green, 100)
+}
+
+func BenchmarkBestSprint100(b *testing.B) {
+	benchmarkBSprint(b, 100)
+}
+
+func BenchmarkSprintf100(b *testing.B) {
+	benchmarkSprintf(b, Green, 100)
+}
+
+func BenchmarkBestSprintf100(b *testing.B) {
+	benchmarkBSprintf(b, 100)
+}
+
+func BenchmarkS500(b *testing.B) {
+	benchmarkS(b, Green, 500)
+}
+
+func BenchmarkS1000(b *testing.B) {
+	benchmarkS(b, Green, 1000)
+}
+
+func BenchmarkS1000WithoutP(b *testing.B) {
+	benchmarkS(b, R{FgGreen}, 1000)
+}
+
+func BenchmarkBestS1000(b *testing.B) {
+	benchmarkBS(b, 1000)
+}
+
+func BenchmarkSprint1000(b *testing.B) {
+	benchmarkSprint(b, Green, 1000)
+}
+
+func BenchmarkBestSprint1000(b *testing.B) {
+	benchmarkBSprint(b, 1000)
+}
+
+func BenchmarkSprintf1000(b *testing.B) {
+	benchmarkSprintf(b, Green, 1000)
+}
+
+func BenchmarkBestSprintf1000(b *testing.B) {
+	benchmarkBSprintf(b, 1000)
+}
+
+func BenchmarkS10000(b *testing.B) {
+	benchmarkS(b, Green, 10000)
+}
+
+func benchmarkS(b *testing.B, r R, count int) {
+	Enable(true)
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		r.S(str)
+	}
+}
+
+// func benchmarkBS(b *testing.B, count int) {
+// 	str := strings.Repeat("1", count)
+// 	b.ResetTimer()
+
+// 	for n := 0; n < b.N; n++ {
+// 		strings.Join([]string{"\x1b[32m", str, "\x1b[0m"}, "")
+// 	}
+// }
+
+func benchmarkBS(b *testing.B, count int) {
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		_ = "\x1b[32m" + str + "\x1b[0m"
+	}
+}
+
+// func benchmarkBS(b *testing.B, count int) {
+// 	str := strings.Repeat("1", count)
+// 	prev := []byte("\x1b[32m")
+// 	tail := []byte("\x1b[0m")
+// 	b.ResetTimer()
+
+// 	for n := 0; n < b.N; n++ {
+// 		var buf = make([]byte, 5+len(str)+4)
+// 		n := 0
+// 		copy(buf[n:], prev)
+// 		n += 5
+// 		copy(buf[n:], []byte(str))
+// 		n += len(str)
+// 		copy(buf[n:], tail)
+// 		_ = string(buf)
+// 	}
+// }
+
+func benchmarkSprint(b *testing.B, r R, count int) {
+	Enable(true)
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		r.Sprint(str)
+	}
+}
+
+func benchmarkBSprint(b *testing.B, count int) {
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		fmt.Sprint("\x1b[32m", str, "\x1b[0m")
+	}
+}
+
+func benchmarkSprintf(b *testing.B, r R, count int) {
+	Enable(true)
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		r.Sprintf("%s", str)
+	}
+}
+
+func benchmarkBSprintf(b *testing.B, count int) {
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		fmt.Sprintf("\x1b[32m%s\x1b[0m", str)
 	}
 }

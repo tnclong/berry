@@ -32,6 +32,10 @@ func Prepare(r R) R {
 //
 // When the length of R is 0, the S will clear all surrounding in str.
 func (r R) S(str string) string {
+	return r.s(str, true)
+}
+
+func (r R) s(str string, check bool) string {
 	if !enabled {
 		return str
 	}
@@ -41,14 +45,17 @@ func (r R) S(str string) string {
 	}
 
 	hseq := string(join(r))
+
+	if !check {
+		return hseq + str + tseq
+	}
+
 	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
 		return m + hseq
 	})
-
 	if strings.HasSuffix(str, tseq) {
 		return str
 	}
-
 	return str + tseq
 }
 

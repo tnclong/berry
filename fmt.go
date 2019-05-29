@@ -11,15 +11,15 @@ import (
 // https://golang.org/pkg/fmt/
 
 func (r R) Fprintf(w io.Writer, format string, a ...interface{}) (n int, err error) {
-	return fmt.Fprintf(w, r.S(format), a...)
+	return fmt.Fprintf(w, r.s(format, false), a...)
 }
 
 func (r R) Printf(format string, a ...interface{}) (n int, err error) {
-	return fmt.Printf(r.S(format), a...)
+	return fmt.Printf(r.s(format, false), a...)
 }
 
 func (r R) Sprintf(format string, a ...interface{}) string {
-	return fmt.Sprintf(r.S(format), a...)
+	return fmt.Sprintf(r.s(format, false), a...)
 }
 
 func (r R) Fprint(w io.Writer, a ...interface{}) (n int, err error) {
