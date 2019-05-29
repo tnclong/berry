@@ -1,13 +1,9 @@
 package berry
 
-import (
-	"bytes"
-)
-
 var sseq = []uint8{'\x1b', '['}
 
 func join(codes []uint8) []uint8 {
-	if bytes.HasPrefix(codes, sseq) {
+	if len(codes) == 0 || mseqReg.Match(codes) {
 		return codes
 	}
 

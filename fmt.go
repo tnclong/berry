@@ -52,7 +52,7 @@ func (r R) around(a []interface{}) []interface{} {
 	}
 
 	aa := make([]interface{}, len(a)+2)
-	aa[0] = string(join(r))
+	aa[0] = r
 	copy(aa[1:], a)
 	aa[len(a)+1] = tseq
 	return aa

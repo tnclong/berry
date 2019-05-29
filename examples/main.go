@@ -9,13 +9,13 @@ import (
 
 func main() {
 	colors := map[string][2]berry.R{
-		"Red":     {berry.Red, {berry.BgRed}},
-		"Green":   {berry.Green, {berry.BgGreen}},
-		"Yellow":  {berry.Yellow, {berry.BgYellow}},
-		"Blue":    {berry.Blue, {berry.BgBlue}},
-		"Magenta": {berry.Magenta, {berry.BgMagenta}},
-		"Cyan":    {berry.Cyan, {berry.BgCyan}},
-		"White":   {berry.White, {berry.BgWhite}},
+		"Red":     {berry.Red, berry.New(berry.BgRed)},
+		"Green":   {berry.Green, berry.New(berry.BgGreen)},
+		"Yellow":  {berry.Yellow, berry.New(berry.BgYellow)},
+		"Blue":    {berry.Blue, berry.New(berry.BgBlue)},
+		"Magenta": {berry.Magenta, berry.New(berry.BgMagenta)},
+		"Cyan":    {berry.Cyan, berry.New(berry.BgCyan)},
+		"White":   {berry.White, berry.New(berry.BgWhite)},
 	}
 
 	for n, c := range colors {
@@ -24,9 +24,9 @@ func main() {
 			strings.Repeat(" ", 10-len(n)),
 			c[1].S(strings.Repeat(" ", 20)),
 			strings.Repeat(" ", 3),
-			berry.R{
+			berry.New(
 				berry.Italic, berry.Underline, berry.Bright,
-			}.S(c[0].S(n)),
+			).S(c[0].S(n)),
 		)
 	}
 }

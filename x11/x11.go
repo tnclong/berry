@@ -5,7 +5,7 @@ import (
 )
 
 func prepare(r, g, b uint8) berry.R {
-	return berry.Prepare(berry.R{berry.FgSet, berry.RGB, r, g, b})
+	return berry.New(berry.FgSet, berry.RGB, r, g, b)
 }
 
 // https://en.wikipedia.org/wiki/X11_color_names#Color_name_chart

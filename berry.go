@@ -18,14 +18,17 @@ import (
 //   exmaples/*.go
 //   *_test.go
 //
-type R []uint8
+type R string
 
-// Prepare create a new R has better performace
-// If r already prepared, r will be returned.
+// New create a new R
+//
+// If r already matched `^(\x1b\[([\d;]+)m)`, original r will be returned.
+//
 // examples:
-//   string(Prepare(berry.R{berry.FgSet, berry.Bit8, 1})) => "\x1b[38;5;1m"
-func Prepare(r R) R {
-	return join(r)
+//   r := berry.New(berry.FgSet, berry.Bit8, 1) => "\x1b[38;5;1m"
+//   r.S("s") => "\x1b[38;5;1ms\x1b[0m"
+func New(r ...uint8) R {
+	return R(join(r))
 }
 
 // S wraps str around a sequence of SGR parameters that store in r.
@@ -59,10 +62,10 @@ func (r R) s(str string, strict bool) string {
 	}
 
 	if !strict {
-		return string(join(r)) + str + tseq
+		return string(r) + str + tseq
 	}
 
-	hseq := string(join(r))
+	hseq := string(r)
 	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
 		return m + hseq
 	})
@@ -75,13 +78,14 @@ func (r R) s(str string, strict bool) string {
 var (
 	seqReg  = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 	hseqReg = regexp.MustCompile(`^(\x1b\[([\d;]+)m)*`)
+	mseqReg = regexp.MustCompile(`^(\x1b\[([\d;]+)m)`)
 )
 
 const (
 	tseq = "\x1b[0m"
 )
 
-// A subset of SGR parameters.
+// A subset of SGR parameters that be used in New.
 // https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
 const (
 	// Reset terminal to default colors/backgrounds(attributes)
@@ -99,7 +103,7 @@ const (
 	CrossOut
 )
 
-// 3/4-bit foreground color of text
+// 3/4-bit foreground color of text that be used in New.
 const (
 	FgBlack uint8 = iota + 30
 	FgRed
@@ -113,7 +117,7 @@ const (
 	FgSet
 )
 
-// 3/4-bit background color of text
+// 3/4-bit background color of text that be used in New.
 const (
 	BgBlack uint8 = iota + 40
 	BgRed
@@ -130,13 +134,13 @@ const (
 const (
 	// Bit8 is a flag that be used after FgSet and BgSet for specify a 8-bit color.
 	// examples:
-	//    berry.R{berry.FgSet, berry.Bit8, 1}.S("Red") => "\x1b[38;5;1mRed\x1b[0m"
-	//    berry.R{berry.BgSet, berry.Bit8, 11}.S("Yellow") => "\x1b[48;5;11mYellow\x1b[0m"
+	//    berry.New(berry.FgSet, berry.Bit8, 1).S("Red") => "\x1b[38;5;1mRed\x1b[0m"
+	//    berry.New(berry.BgSet, berry.Bit8, 11).S("Yellow") => "\x1b[48;5;11mYellow\x1b[0m"
 	Bit8 uint8 = 5
 	// Bit24 is a flag that be used after FgSet and BgSet for specify a 24-bit color.
 	// examples:
-	//    berry.R{berry.FgSet, berry.Bit24, 0, 0, 0}.S("Black") => "\x1b[38;2;0;0;0mBlack\x1b[0m"
-	//    berry.R{berry.BgSet, berry.Bit24, 0, 0, 0}.S("Black") => "\x1b[48;2;0;0;0mBlack\x1b[0m"
+	//    berry.New(berry.FgSet, berry.Bit24, 0, 0, 0).S("Black") => "\x1b[38;2;0;0;0mBlack\x1b[0m"
+	//    berry.New(berry.BgSet, berry.Bit24, 0, 0, 0).S("Black") => "\x1b[48;2;0;0;0mBlack\x1b[0m"
 	Bit24 uint8 = 2
 
 	// Color256 is alias of Bit8
