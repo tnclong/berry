@@ -32,10 +32,24 @@ func Prepare(r R) R {
 //
 // When the length of R is 0, the S will clear all surrounding in str.
 func (r R) S(str string) string {
+	return r.s(str, false)
+}
+
+// SS is strict S method.
+//
+// This method is about 7x slower than S in benchmark result.
+//
+// If you have a str already arrounded with SGR:
+//     Red.S("\x1b[3mItalic then BgRed\x1b[0m")
+//       => "\x1b[41m\x1b[3mItalic then BgRed\x1b[0m\x1b[0m"
+//
+//     Red.SS("\x1b[3mItalic then BgRed\x1b[0m")
+//       => "\x1b[3m\x1b[41mItalic then BgRed\x1b[0m"
+func (r R) SS(str string) string {
 	return r.s(str, true)
 }
 
-func (r R) s(str string, check bool) string {
+func (r R) s(str string, strict bool) string {
 	if !enabled {
 		return str
 	}
@@ -44,12 +58,11 @@ func (r R) s(str string, check bool) string {
 		return seqReg.ReplaceAllString(str, "")
 	}
 
-	hseq := string(join(r))
-
-	if !check {
-		return hseq + str + tseq
+	if !strict {
+		return string(join(r)) + str + tseq
 	}
 
+	hseq := string(join(r))
 	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
 		return m + hseq
 	})
@@ -62,7 +75,10 @@ func (r R) s(str string, check bool) string {
 var (
 	seqReg  = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 	hseqReg = regexp.MustCompile(`^(\x1b\[([\d;]+)m)*`)
-	tseq    = "\x1b[0m"
+)
+
+const (
+	tseq = "\x1b[0m"
 )
 
 // A subset of SGR parameters.

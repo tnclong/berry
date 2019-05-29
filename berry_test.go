@@ -107,7 +107,7 @@ func TestS(t *testing.T) {
 			str:  "Italic then BgRed",
 			r:    R{Italic},
 			r2:   R{BgRed},
-			want: "\x1b[3m\x1b[41mItalic then BgRed\x1b[0m",
+			want: "\x1b[41m\x1b[3mItalic then BgRed\x1b[0m\x1b[0m",
 		},
 	}
 
@@ -131,6 +131,36 @@ func TestS(t *testing.T) {
 		}
 		if actual != tc.str {
 			t.Errorf("when Enable(false), Effect(%q) want %q but get %q", tc.str, tc.str, actual)
+		}
+	}
+}
+
+func TestSS(t *testing.T) {
+	Enable(true)
+
+	var cases = []struct {
+		str  string
+		r    R
+		r2   R
+		want string
+	}{
+		{
+			str:  "Italic then BgRed",
+			r:    R{Italic},
+			r2:   R{BgRed},
+			want: "\x1b[3m\x1b[41mItalic then BgRed\x1b[0m",
+		},
+	}
+
+	Enable(true)
+	for _, tc := range cases {
+		actual := tc.r.SS(tc.str)
+		if len(tc.r2) != 0 {
+			actual = tc.r2.SS(actual)
+		}
+		t.Log(tc.want, actual)
+		if actual != tc.want {
+			t.Errorf("S(%q) want %q but get %q", tc.str, tc.want, actual)
 		}
 	}
 }
