@@ -391,11 +391,11 @@ func (r R) RI() interface{} {
 # 9. Summary.
 
 We consider correctness, ease to use, performance when we build a new wheel.
-We have emphasis in different phase, but we must keep them in your mind.
+We have emphasis in different phase, but we must keep them in our mind.
 We use great tools to implement our goal.
 `go` language is your friend.
 `go test` is your friend.
-`go cover` is your
+`go cover` is your friend.
 `go doc` is your friend.
 `go benchmark` is your friend.
 
