@@ -22,7 +22,7 @@ type R struct {
 	r string
 
 	// https://github.com/golang/go/issues/32305#issuecomment-497051905
-	ir interface{}
+	ri interface{}
 }
 
 // New create a new R
@@ -34,7 +34,7 @@ type R struct {
 //   r.S("s") => "\x1b[38;5;1ms\x1b[0m"
 func New(r ...uint8) R {
 	rr := string(join(r))
-	return R{r: rr, ir: rr}
+	return R{r: rr, ri: rr}
 }
 
 // S wraps str around a sequence of SGR parameters that store in r.
@@ -80,7 +80,7 @@ func (r R) R() string {
 //
 // you can see more detail in https://github.com/golang/go/issues/32305#issuecomment-497051905
 func (r R) RI() interface{} {
-	return r.ir
+	return r.ri
 }
 
 func (r R) s(str string, strict bool) string {
