@@ -108,7 +108,7 @@ func TestS(t *testing.T) {
 	Enable(true)
 	for _, tc := range cases {
 		actual := tc.r.S(tc.str)
-		if len(tc.r2) != 0 {
+		if len(tc.r2.r) != 0 {
 			actual = tc.r2.S(actual)
 		}
 		t.Log(tc.want, actual)
@@ -120,7 +120,7 @@ func TestS(t *testing.T) {
 	Enable(false)
 	for _, tc := range cases {
 		actual := tc.r.S(tc.str)
-		if len(tc.r2) != 0 {
+		if len(tc.r2.r) != 0 {
 			actual = tc.r2.S(actual)
 		}
 		if actual != tc.str {
@@ -149,7 +149,7 @@ func TestSS(t *testing.T) {
 	Enable(true)
 	for _, tc := range cases {
 		actual := tc.r.SS(tc.str)
-		if len(tc.r2) != 0 {
+		if len(tc.r2.r) != 0 {
 			actual = tc.r2.SS(actual)
 		}
 		t.Log(tc.want, actual)
@@ -240,11 +240,11 @@ func TestSDisplay(t *testing.T) {
 
 func TestNew(t *testing.T) {
 	r := New(FgSet, Bit8, 1)
-	pr := New([]uint8(r)...)
+	pr := New([]uint8(r.R())...)
 
 	want := "\x1b[38;5;1m"
 	t.Logf("%q %q", want, pr)
-	if want != string(pr) {
+	if want != string(pr.r) {
 		t.Logf("want %q but get %q", want, pr)
 	}
 
@@ -257,9 +257,38 @@ func TestNew(t *testing.T) {
 		}
 	}
 
-	ppr := New([]uint8(pr)...)
-	if want != string(ppr) {
-		t.Errorf("want %q but get %q", want, string(ppr))
+	ppr := New([]uint8(pr.R())...)
+	if want != string(ppr.R()) {
+		t.Errorf("want %q but get %q", want, string(ppr.R()))
+	}
+}
+
+func TestR(t *testing.T) {
+	rs := Yellow.R()
+	want := "\x1b[33m"
+	if rs != want {
+		t.Errorf("want %q but get %q", want, rs)
+	}
+
+	t.Log(rs + "y" + RReset.R())
+}
+
+func TestRI(t *testing.T) {
+	rsi := Yellow.RI()
+	rsi2 := Yellow.RI()
+	if rsi != rsi2 {
+		t.Error("want same")
+	}
+
+	_, ok := rsi.(string)
+	if !ok {
+		t.Error("want rsi type is string")
+	}
+
+	actual := fmt.Sprint(rsi)
+	want := "\x1b[33m"
+	if actual != want {
+		t.Errorf("want %q but get %q", want, actual)
 	}
 }
 
@@ -291,12 +320,20 @@ func BenchmarkSprint100(b *testing.B) {
 	benchmarkSprint(b, Green, 100)
 }
 
+func BenchmarkBestSprintUseBerry100(b *testing.B) {
+	benchmarkBestSprintUseBerry(b, Green, 100)
+}
+
 func BenchmarkBestSprint100(b *testing.B) {
 	benchmarkBSprint(b, 100)
 }
 
 func BenchmarkSprintf100(b *testing.B) {
 	benchmarkSprintf(b, Green, 100)
+}
+
+func BenchmarkBestSprintfUseBerry100(b *testing.B) {
+	benchmarkBestSprintfUseBerry(b, Green, 100)
 }
 
 func BenchmarkBestSprintf100(b *testing.B) {
@@ -323,12 +360,20 @@ func BenchmarkSprint1000(b *testing.B) {
 	benchmarkSprint(b, Green, 1000)
 }
 
+func BenchmarkBestSprintUseBerry1000(b *testing.B) {
+	benchmarkBestSprintUseBerry(b, Green, 1000)
+}
+
 func BenchmarkBestSprint1000(b *testing.B) {
 	benchmarkBSprint(b, 1000)
 }
 
 func BenchmarkSprintf1000(b *testing.B) {
 	benchmarkSprintf(b, Green, 1000)
+}
+
+func BenchmarkBestSprintfUseBerry1000(b *testing.B) {
+	benchmarkBestSprintfUseBerry(b, Green, 1000)
 }
 
 func BenchmarkBestSprintf1000(b *testing.B) {
@@ -414,6 +459,16 @@ func benchmarkBSprint(b *testing.B, count int) {
 	}
 }
 
+func benchmarkBestSprintUseBerry(b *testing.B, r R, count int) {
+	Enable(true)
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		fmt.Sprint(r.RI(), str, RReset.RI())
+	}
+}
+
 func benchmarkSprintf(b *testing.B, r R, count int) {
 	Enable(true)
 	str := strings.Repeat("1", count)
@@ -430,5 +485,15 @@ func benchmarkBSprintf(b *testing.B, count int) {
 
 	for n := 0; n < b.N; n++ {
 		fmt.Sprintf("\x1b[32m%s\x1b[0m", str)
+	}
+}
+
+func benchmarkBestSprintfUseBerry(b *testing.B, r R, count int) {
+	Enable(true)
+	str := strings.Repeat("1", count)
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		fmt.Sprintf("%s%s%s", r.RI(), str, RReset.RI())
 	}
 }

@@ -18,7 +18,12 @@ import (
 //   exmaples/*.go
 //   *_test.go
 //
-type R string
+type R struct {
+	r string
+
+	// https://github.com/golang/go/issues/32305#issuecomment-497051905
+	ir interface{}
+}
 
 // New create a new R
 //
@@ -28,7 +33,8 @@ type R string
 //   r := berry.New(berry.FgSet, berry.Bit8, 1) => "\x1b[38;5;1m"
 //   r.S("s") => "\x1b[38;5;1ms\x1b[0m"
 func New(r ...uint8) R {
-	return R(join(r))
+	rr := string(join(r))
+	return R{r: rr, ir: rr}
 }
 
 // S wraps str around a sequence of SGR parameters that store in r.
@@ -52,22 +58,46 @@ func (r R) SS(str string) string {
 	return r.s(str, true)
 }
 
+// R return a sequence of SGR parameters that able to append to str directly.
+//   berry.Red.R() + "red" + berry.RRset.R() => "\x1b[31mred\x1b[0m"
+//
+// use this method when you need higher performance.
+//
+func (r R) R() string {
+	return r.r
+}
+
+// RI is a interface{} that contains R() value.
+// this method avoid a alloc op when use R as interface{} in golang.
+//
+// example:
+//     fmt.Sprint(berry.Blue.RI(), "1", 2, berry.RRset.RI())
+//
+//     aa := make([]interface{}, 2)
+//     aa[0] = berry.Yellow.RI()
+//
+// use this method when you need higher performance.
+//
+// you can see more detail in https://github.com/golang/go/issues/32305#issuecomment-497051905
+func (r R) RI() interface{} {
+	return r.ir
+}
+
 func (r R) s(str string, strict bool) string {
 	if !enabled {
 		return str
 	}
 
-	if len(r) == 0 {
+	if len(r.r) == 0 {
 		return seqReg.ReplaceAllString(str, "")
 	}
 
 	if !strict {
-		return string(r) + str + tseq
+		return r.r + str + tseq
 	}
 
-	hseq := string(r)
 	str = hseqReg.ReplaceAllStringFunc(str, func(m string) string {
-		return m + hseq
+		return m + r.r
 	})
 	if strings.HasSuffix(str, tseq) {
 		return str

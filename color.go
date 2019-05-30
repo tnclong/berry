@@ -10,4 +10,8 @@ var (
 	Magenta = New(FgMagenta)
 	Cyan    = New(FgCyan)
 	White   = New(FgWhite)
+
+	// It's convenient global variable when you need controll reset manually
+	// for higher performance.
+	RReset = New(Reset)
 )
