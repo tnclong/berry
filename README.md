@@ -1,7 +1,13 @@
 ## Berry
 
-Berry colorizing printed string on ANSI terminals.
-[ANSI escape codes](http://en.wikipedia.org/wiki/ANSI_escape_code)
+A golang package for colorizing printed string on ANSI terminals.
+
+This implement according to:
+> https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
+
+> https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+
+> https://en.wikipedia.org/wiki/X11_color_names#Color_name_chart
 
 ![Examples](https://github.com/tnclong/berry/blob/master/examples.png)
 
