@@ -5,6 +5,13 @@ Berry colorizing printed string on ANSI terminals.
 
 ![Examples](https://github.com/tnclong/berry/blob/master/examples.png)
 
+## Aim
+
+1. Near zero abstraction cost.
+2. Test coverage 100%.
+3. Easy to use.
+4. Good document and examples.
+
 ## Doc
 
 https://godoc.org/github.com/tnclong/berry
